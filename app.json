@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "quiztion",
+    "slug": "quiztion",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/logoApp.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./src/assets/logoVermelha.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/logoVermelha.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./src/assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "30bb3ab0-363e-4307-b118-40711c5c5eec"
+      }
+    }
+  }
+}
