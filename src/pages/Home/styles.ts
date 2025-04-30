@@ -70,4 +70,31 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
     },
+    btnTenteNovamente: {
+        backgroundColor: '#E40E3C',
+    },
+    retryContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 30,
+        marginBottom: 80,
+        width: '100%',
+    },
+    txtTenteNovamente: {
+        justifyContent: "center",
+        fontSize: 20
+    },
+    btn: {
+        width: '100%',
+        height: 50,
+        justifyContent: "center",
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    txtError: {
+        color: 'white',
+        fontFamily: 'Baloo2-SemiBold',
+        fontSize: 20,
+    },
 })

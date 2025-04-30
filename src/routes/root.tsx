@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../pages/Home';
 import LoginScreen from '../pages/Login';
@@ -9,6 +9,7 @@ import LoadingQuestions from '../pages/LoadingQuestions';
 import LoadingNext from '../pages/LoadingNext';
 import ResultsScreen from '../pages/Results';
 import AboutUs from '../pages/AboutUs';
+import { useTheme } from '../context/ThemeContext';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -23,10 +24,19 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
+  const { isDarkMode } = useTheme();
   const { isLoggedIn } = useAuth();
 
+  const navigationTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: isDarkMode ? '#325874' : '#ffffff',
+    },
+  };
+  
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator>
         {isLoggedIn ? (
           <>

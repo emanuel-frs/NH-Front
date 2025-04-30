@@ -28,7 +28,6 @@ export const styles = StyleSheet.create({
         borderBottomColor: '#3F4A52'
     },
     container: {
-        paddingTop: 30,
         padding: 5,
         shadowOffset: { width: 0, height: 12 },
         shadowOpacity: 0.8,

@@ -14,12 +14,11 @@ export const styles = StyleSheet.create({
         width: '80%',
         height: '100%',
         zIndex: 10,
-        paddingTop: 50,
         display: 'flex',
         padding: 15,
         justifyContent: "space-between",
-        borderEndEndRadius: 30,
-        borderEndStartRadius: 30
+        borderEndEndRadius: 20,
+        borderEndStartRadius: 20
     },
     containerWhite: {
         backgroundColor: 'white',

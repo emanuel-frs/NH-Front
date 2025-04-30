@@ -1,7 +1,7 @@
 import React from 'react';
 import { styles } from './styles';
-import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
-import { useTheme } from '../../context/ThemeContext'; // ou o hook correspondente do seu setup
+import { View, TouchableOpacity, Image } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
 
 const ThemeToggleButton = () => {
   const { isDarkMode, toggleTheme } = useTheme();

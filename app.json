@@ -8,9 +8,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./src/assets/logoVermelha.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#202E38"
     },
     "ios": {
       "supportsTablet": true
@@ -19,15 +17,19 @@
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/logoVermelha.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.emanuelfrs.quiztion"
     },
     "web": {
-      "favicon": "./src/assets/favicon.png"
+      "favicon": {}
     },
     "extra": {
       "eas": {
         "projectId": "30bb3ab0-363e-4307-b118-40711c5c5eec"
       }
-    }
+    },
+    "plugins": [
+      "expo-asset"
+    ]
   }
 }
