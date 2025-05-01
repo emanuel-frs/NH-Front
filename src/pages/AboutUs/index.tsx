@@ -15,8 +15,8 @@ export default function AboutUs() {
 
   const members = [
     { name: 'Emanuel', url: 'https://github.com/emanuel-frs' },
-    { name: 'Ana', url: 'https://github.com/ana-dev' },
-    { name: 'João', url: 'https://github.com/joao-dev' },
+    { name: 'Izabelle', url: 'https://github.com/izaabelha' },
+    { name: 'Romario', url: 'https://github.com/romariobismarck' },
     { name: 'Maria', url: 'https://github.com/maria-dev' },
     { name: 'Carlos', url: 'https://github.com/carlos-dev' },
     { name: 'Julia', url: 'https://github.com/julia-dev' },

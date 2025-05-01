@@ -84,7 +84,7 @@ export function Sidebar() {
                             isDarkMode ? styles.txtSidebarNomeDark : styles.txtSidebarDark,
                             styles.txtSidebarNome
                         ]}>
-                            Nome do Usuário
+                            Adalberto
                         </Text>
                     </View>
                     <ButtonHeader
