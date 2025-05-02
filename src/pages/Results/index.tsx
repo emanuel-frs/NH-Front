@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Modal, TouchableOpacity } from 'react-native';
 import Background from '../../components/Background/Background';
 import { useTheme } from '../../context/ThemeContext';
 import { useQuiz } from '../../context/QuizContext';
@@ -18,11 +18,16 @@ export default function Results() {
     const navigation = useNavigation<ResultsNavigationProp>();
     const [mensagem, setMensagem] = useState<string>("");
     const [tituloMensagem, setTituloMensagem] = useState<string>("");
-    const [gabaritou, setGabaritou] = useState<boolean>(false)
+    const [gabaritou, setGabaritou] = useState<boolean>(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedQuestion, setSelectedQuestion] = useState<{
+        questao: any;
+        acertou: boolean;
+    } | null>(null);
 
     const backgroundImage = isDarkMode 
-    ? require('../../assets/backgroundDark.png') 
-    : require('../../assets/backgroundWhite.png');
+        ? require('../../assets/backgroundDark.png') 
+        : require('../../assets/backgroundWhite.png');
     
     const backgroundColor = isDarkMode ? '#202E38' : '#FFFFFF';
     
@@ -54,6 +59,19 @@ export default function Results() {
         navigation.navigate('Home');
     };
 
+    const handleQuestionPress = (questao: any) => {
+        const acertou = respostas[questao.idQuestao];
+        setSelectedQuestion({
+            questao,
+            acertou
+        });
+        setModalVisible(true);
+    };
+
+    const getQuestionIndex = () => {
+        return questoes.findIndex(q => q.idQuestao === selectedQuestion?.questao?.idQuestao) + 1;
+    };
+
     return (
         <Background backgroundImage={() => {}} backgroundColor={backgroundColor}>
             <HeaderDefault 
@@ -68,19 +86,24 @@ export default function Results() {
                     {questoes.map((questao, index) => {
                         const acertou = respostas[questao.idQuestao];
                         return (
-                        <View
-                            key={questao.idQuestao}
-                            style={[
-                                styles.cell,isDarkMode ? styles.cellDark : styles.cellWhite,
-                                acertou ? styles.cellCorrect : styles.cellWrong,
-                                gabaritou ? styles.gabaritou : {}
-                            ]}
-                        >
-                            <Text style={[styles.cellText, 
-                                acertou ? styles.cellTextCorrect : styles.cellTextWrong,
-                                gabaritou ? styles.txtGabaritou : {}
-                            ]}>{index + 1}</Text>
-                        </View>
+                            <TouchableOpacity
+                                key={questao.idQuestao}
+                                style={[
+                                    styles.cell,
+                                    isDarkMode ? styles.cellDark : styles.cellWhite,
+                                    acertou ? styles.cellCorrect : styles.cellWrong,
+                                    gabaritou ? styles.gabaritou : {}
+                                ]}
+                                onPress={() => handleQuestionPress(questao)}
+                            >
+                                <Text style={[
+                                    styles.cellText, 
+                                    acertou ? styles.cellTextCorrect : styles.cellTextWrong,
+                                    gabaritou ? styles.txtGabaritou : {}
+                                ]}>
+                                    {index + 1}
+                                </Text>
+                            </TouchableOpacity>
                         );
                     })}
                 </View>
@@ -93,6 +116,64 @@ export default function Results() {
                     />
                 </View>
             </View>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={[
+                        styles.modalContent,
+                        isDarkMode ? styles.modalContentDark : styles.modalContentWhite,
+                        selectedQuestion?.acertou === false && styles.modalContentWrong
+                    ]}>
+                        <Text style={[
+                            styles.modalTitle,
+                            isDarkMode ? styles.modalTitleDark : styles.modalTitleWhite,
+                            selectedQuestion?.acertou === false && { color: '#E40E3C' }
+                        ]}>
+                            Questão {getQuestionIndex()}
+                        </Text>
+                        
+                        <Text style={[
+                            { 
+                                textAlign: 'center', 
+                                marginBottom: 10, 
+                                fontSize: 16, 
+                                fontFamily: 'Baloo2-ExtraBold' 
+                            },
+                            selectedQuestion?.acertou ? { color: '#2CCB8E' } : { color: '#E40E3C' }
+                        ]}>
+                            {selectedQuestion?.acertou ? '✓ Você acertou!' : '✗ Você errou'}
+                        </Text>
+                        
+                        <ScrollView>
+                            <Text style={[
+                                styles.modalText,
+                                isDarkMode ? styles.modalTextDark : styles.modalTextWhite
+                            ]}>
+                                {selectedQuestion?.questao?.enunciado}
+                            </Text>
+                        </ScrollView>
+                        
+                        <Button
+                            title="FECHAR"
+                            onPress={() => setModalVisible(false)}
+                            style={[
+                                styles.modalButton,
+                                gabaritou ? styles.modalButtonGabaritou : styles.modalButtonNormal,
+                                selectedQuestion?.acertou === false && { 
+                                    borderColor: '#E40E3C',
+                                    backgroundColor: '#E40E3C' 
+                                }
+                            ]}
+                            textStyle={styles.buttonText}
+                        />
+                    </View>
+                </View>
+            </Modal>
         </Background>
     );
 }

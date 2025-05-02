@@ -15,8 +15,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/logoVermelha.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./src/assets/logoApp.png",
+        "backgroundColor": "#000"
       },
       "package": "com.emanuelfrs.quiztion"
     },

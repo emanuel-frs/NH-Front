@@ -7,21 +7,41 @@ import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { Text } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
+import LogoutConfirmationModal from "../ModalLogout";
 
 export function Sidebar() {
     const { sidebar, setSidebar } = useSidebar();
     const { isDarkMode, toggleTheme } = useTheme();
     const { logout } = useAuth();
     const navigation = useNavigation<NavigationProp<any>>();
+    const [isVisible, setIsVisible] = useState(false);
+
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+    const handleLogoutPress = () => {
+        setShowLogoutModal(true);
+    };
+
+    const handleConfirmLogout = () => {
+        setShowLogoutModal(false);
+        logout();
+    };
+
+    const handleCancelLogout = () => {
+        setShowLogoutModal(false);
+    };
 
     const slideAnim = useRef(new Animated.Value(-300)).current;
     const fadeAnim = useRef(new Animated.Value(0)).current;
 
-    const [isVisible, setIsVisible] = useState(false);
-
     const handleNavigateAboutUs = () => {
         setSidebar(false)
         navigation.navigate('AboutUs');
+    };
+
+    const handleNavigateInicio = () => {
+        setSidebar(false)
+        navigation.navigate('Home');
     };
 
     useEffect(() => {
@@ -89,7 +109,7 @@ export function Sidebar() {
                     </View>
                     <ButtonHeader
                         title="INÍCIO"
-                        onPress={() => {}}
+                        onPress={handleNavigateInicio}
                         style={[
                             isDarkMode ? styles.btnSidebarDark : styles.btnSidebarWhite,
                             styles.btnSidebar
@@ -126,9 +146,15 @@ export function Sidebar() {
                 </View>
                 <ButtonHeader
                     title="SAIR DA CONTA"
-                    onPress={logout}
+                    onPress={handleLogoutPress}
                     style={styles.btnSair}
                     textStyle={styles.txtSair}
+                />
+
+                <LogoutConfirmationModal
+                    visible={showLogoutModal}
+                    onConfirm={handleConfirmLogout}
+                    onCancel={handleCancelLogout}
                 />
             </Animated.View>
         </>

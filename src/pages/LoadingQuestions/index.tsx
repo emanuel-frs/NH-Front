@@ -18,7 +18,8 @@ type Params = {
 };
 
 type NavigationProps = {
-    navigate: (screen: string, params?: { index: number }) => void;
+  navigate: (screen: string, params?: any) => void;
+  replace: (screen: string, params?: any) => void;
 };
 
 export default function LoadingQuestions() {
@@ -36,10 +37,10 @@ export default function LoadingQuestions() {
         const data = await getQuestoesByMateria(materia.idMateria);
         const questoesAleatorias = embaralharArray(data);
         setQuestoes(questoesAleatorias);
-        navigation.navigate('Question' as never, { 
+        navigation.replace('Question', { 
           index: 0, 
           materia 
-        } as never);        
+        });        
       } catch (err) {
         console.error('Erro ao carregar questões:', err);
       }

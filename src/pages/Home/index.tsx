@@ -57,7 +57,6 @@ export default function Home() {
       <Sidebar />
       <Background backgroundImage={() => {}} backgroundColor={backgroundColor}>
         <HeaderHome />
-  
         {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={isDarkMode ? '#FFF' : '#325874'} />

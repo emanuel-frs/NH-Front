@@ -98,5 +98,70 @@ export const styles = StyleSheet.create({
     },
     txtGabaritou: {
         color: "#FF00D9"
-    }
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    },
+    modalContent: {
+        width: '90%',
+        maxHeight: '80%',
+        borderRadius: 10,
+        padding: 20,
+        borderWidth: 4,
+    },
+    modalContentDark: {
+        backgroundColor: '#202E38',
+        borderColor: '#2CCB8E',
+    },
+    modalContentWhite: {
+        backgroundColor: '#FFFFFF',
+        borderColor: '#325874',
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontFamily: 'Baloo2-ExtraBold',
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+    modalTitleDark: {
+        color: '#FFFFFF',
+    },
+    modalTitleWhite: {
+        color: '#325874',
+    },
+    modalText: {
+        fontSize: 18,
+        fontFamily: 'Baloo2-Medium',
+        lineHeight: 28,
+        marginBottom: 20,
+    },
+    modalTextDark: {
+        color: '#FFFFFF',
+    },
+    modalTextWhite: {
+        color: '#325874',
+    },
+    modalButton: {
+        width: '100%',
+        alignItems: "center",
+        marginTop: 20,
+        borderWidth: 4,
+        height: 60,
+        borderRadius: 10,
+        justifyContent: "center",
+    },
+    modalButtonGabaritou: {
+        borderColor: '#D103B2',
+        backgroundColor: '#FF00D9',
+    },
+    modalButtonNormal: {
+        borderColor: '#119E68',
+        backgroundColor: '#2CCB8E',
+    },
+    modalContentWrong: {
+        borderColor: '#E40E3C',
+    },
 });

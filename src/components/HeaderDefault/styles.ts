@@ -4,6 +4,7 @@ export const styles = StyleSheet.create({
     logo: {
         flexDirection: "row",
         justifyContent: 'center',
+        height: 50
     },
     fontLogo: {
         fontSize: 30,
@@ -35,7 +36,6 @@ export const styles = StyleSheet.create({
         zIndex: 1,
     },
     containerNone: {
-        paddingTop: 30,
         padding: 5,
         shadowOffset: { width: 0, height: 12 },
         shadowOpacity: 0.8,

@@ -6,7 +6,7 @@ import { styles } from './styles';
 import QuestionGroup from '../../components/QuestionGroup/QuestionGroup';
 import ButtonQuestion from '../../components/ButtonsQuestion/ButtonQuestion';
 import { useState } from 'react';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'; // Corrigido: useRoute importado
 import { useQuiz } from '../../context/QuizContext';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../routes/root';
@@ -17,20 +17,19 @@ interface Materia {
   ano: string;
 }
 
-type QuestionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Question'>;
-
-type RouteParams = {
-  Question: {
-    materia?: Materia;
-    index: number;
-  };
+// Tipo estendido para incluir replace
+type QuestionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Question'> & {
+  replace: (screen: keyof RootStackParamList, params?: any) => void;
 };
+
+// Tipo para os parâmetros da rota
+type QuestionRouteProp = RouteProp<RootStackParamList, 'Question'>;
 
 export default function Question() {
     const { isDarkMode } = useTheme();
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const navigation = useNavigation<QuestionScreenNavigationProp>();
-    const route = useRoute<RouteProp<RouteParams, 'Question'>>();
+    const route = useRoute<QuestionRouteProp>(); // Usando o tipo correto
     const { questoes, addResposta } = useQuiz();
     
     const currentIndex = route.params?.index || 0;
@@ -68,10 +67,12 @@ export default function Question() {
             addResposta(questao.idQuestao, acertou);
             
             if (isLastQuestion) {
-                navigation.navigate('Results');
+                navigation.replace('Results');
             } else {
-                navigation.navigate('LoadingNext', { 
-                    index: currentIndex + 1 
+                setSelectedOption(null);
+                navigation.replace('Question', { 
+                    index: currentIndex + 1,
+                    materia: route.params?.materia
                 });
             }
         }
@@ -79,8 +80,10 @@ export default function Question() {
 
     const handlePrevious = () => {
         if (currentIndex > 0) {
-            navigation.navigate('Question', { 
-                index: currentIndex - 1 
+            setSelectedOption(null);
+            navigation.replace('Question', { 
+                index: currentIndex - 1,
+                materia: route.params?.materia
             });
         }
     };
