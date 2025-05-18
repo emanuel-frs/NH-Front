@@ -12,11 +12,12 @@ import LogoutConfirmationModal from "../ModalLogout";
 export function Sidebar() {
     const { sidebar, setSidebar } = useSidebar();
     const { isDarkMode, toggleTheme } = useTheme();
-    const { logout } = useAuth();
     const navigation = useNavigation<NavigationProp<any>>();
     const [isVisible, setIsVisible] = useState(false);
-
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const { usuario, logout } = useAuth();
+
+    if (!usuario) return null;
 
     const handleLogoutPress = () => {
         setShowLogoutModal(true);
@@ -100,12 +101,14 @@ export function Sidebar() {
                         isDarkMode ? styles.perfilDark : styles.perfilWhite,
                         styles.perfil
                     ]}>
+                        {usuario && (
                         <Text style={[
                             isDarkMode ? styles.txtSidebarNomeDark : styles.txtSidebarDark,
                             styles.txtSidebarNome
                         ]}>
-                            Adalberto
+                            {usuario.nome}
                         </Text>
+                        )}
                     </View>
                     <ButtonHeader
                         title="INÍCIO"

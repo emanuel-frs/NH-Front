@@ -1,19 +1,23 @@
 import React, { useEffect } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { getQuestoesByMateria } from '../../services/api';
+import { getPerguntasByMateria } from '../../services/api';
 import { useQuiz } from '../../context/QuizContext';
 import { styles } from './styles';
 import { useTheme } from '../../context/ThemeContext';
 import Background from '../../components/Background/Background';
+import { useAuth } from '../../context/AuthContext';
 
 type Params = {
   params: {
     materia: {
-      idMateria: number;
+      id: number;
       nome: string;
-      ano: number;
     };
+    usuario: {
+      idUsuario: number;
+      serie: string
+    }
   };
 };
 
@@ -26,16 +30,19 @@ export default function LoadingQuestions() {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<RouteProp<Params, 'params'>>();
   const { materia } = route.params;
+  const { usuario } = useAuth();
   const { setQuestoes } = useQuiz();
   const { isDarkMode } = useTheme();
 
+  if (!usuario) return null;
+  
   const backgroundColor = isDarkMode ? '#202E38' : '#FFFFFF';
 
   useEffect(() => {
     const fetchQuestoes = async () => {
       try {
-        const data = await getQuestoesByMateria(materia.idMateria);
-        const questoesAleatorias = embaralharArray(data);
+        const data = await getPerguntasByMateria(materia.id, usuario.serie, usuario.id);
+        const questoesAleatorias = embaralharArray(data).slice(0, 10);
         setQuestoes(questoesAleatorias);
         navigation.replace('Question', { 
           index: 0, 
@@ -47,7 +54,7 @@ export default function LoadingQuestions() {
     };
 
     fetchQuestoes();
-  }, [materia.idMateria, setQuestoes, navigation]);
+  }, [materia.id, setQuestoes, navigation]);
 
   const embaralharArray = (array: any[]) => {
     return array.sort(() => Math.random() - 0.5);

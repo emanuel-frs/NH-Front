@@ -98,4 +98,49 @@ export const styles = StyleSheet.create({
         height: 50,
         marginTop:30
     },
+    picker: {
+        backgroundColor: "#000",
+        borderWidth: 2,
+        borderRadius: 10,
+        padding: 0,
+        marginBottom: 20,
+        fontFamily: 'Baloo2-Bold',
+        color: 'white',
+    },
+    dropdown: {
+        backgroundColor: 'white',
+        borderWidth: 2,
+        borderColor: '#C3C3C3',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 20,
+    },
+    dropdownDark: {
+        backgroundColor: '#202E38',
+        borderWidth: 2,
+        borderColor: '#7E7E7E',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 20,
+    },
+    dropdownPlaceholder: {
+        fontFamily: 'Baloo2-SemiBold',
+        color: '#A8A8A8',
+    },
+    passwordContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        position: 'relative',
+    },
+    passwordInput: {
+        flex: 1,
+        paddingRight: 40,
+    },
+    eyeIcon: {
+        position: 'absolute',
+        right: 10,
+        padding: 10,
+        bottom: 25
+    },
 });

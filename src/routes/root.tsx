@@ -6,7 +6,6 @@ import LoginScreen from '../pages/Login';
 import { useAuth } from '../context/AuthContext';
 import QuestionScreen from '../pages/Question';
 import LoadingQuestions from '../pages/LoadingQuestions';
-import LoadingNext from '../pages/LoadingNext';
 import ResultsScreen from '../pages/Results';
 import AboutUs from '../pages/AboutUs';
 import { useTheme } from '../context/ThemeContext';
@@ -16,7 +15,6 @@ export type RootStackParamList = {
   Home: undefined;
   Question: { index: number; materia?: { id: number; nome: string; ano: string } };
   LoadingQuestions: { materia: { idMateria: number; nome: string; ano: number } };
-  LoadingNext: { index: number };
   Results: undefined;
   AboutUs: undefined;
 };
@@ -54,12 +52,7 @@ const RootNavigator = () => {
               name="LoadingQuestions"
               component={LoadingQuestions}
               options={{ headerShown: false }}
-            />  
-            <Stack.Screen
-              name="LoadingNext"
-              component={LoadingNext}
-              options={{ headerShown: false }}
-            />  
+            />
             <Stack.Screen
               name="Results"
               component={ResultsScreen}

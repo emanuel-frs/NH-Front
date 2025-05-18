@@ -14,11 +14,17 @@ export const styles = StyleSheet.create({
         width: '100%',
         alignItems: "center",
         marginBottom: 20,
-        borderColor: '#C2062E',
-        backgroundColor: '#E40E3C',
         borderRadius: 10,
         justifyContent: "center",
-        height: 100
+        height: 100,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     descricoesMateria: {
         flex: 1,
@@ -32,13 +38,11 @@ export const styles = StyleSheet.create({
         justifyContent: "flex-end"
     },
     txtMateria: {
-        color: 'white',
         fontFamily: 'Baloo2-SemiBold',
         height: 32,
         fontSize: 25,
     },
     txtSerie: {
-        color: '#980724',
         fontFamily: 'Baloo2-ExtraBold',
         fontSize: 20,
     },
@@ -97,4 +101,9 @@ export const styles = StyleSheet.create({
         fontFamily: 'Baloo2-SemiBold',
         fontSize: 20,
     },
-})
+    txtPorcentagem: {
+        fontSize: 30,
+        fontFamily: 'Baloo2-Bold',
+        marginRight: 20
+    },
+});

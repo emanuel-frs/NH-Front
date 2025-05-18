@@ -6,7 +6,7 @@ import { styles } from './styles';
 import QuestionGroup from '../../components/QuestionGroup/QuestionGroup';
 import ButtonQuestion from '../../components/ButtonsQuestion/ButtonQuestion';
 import { useState } from 'react';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'; // Corrigido: useRoute importado
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useQuiz } from '../../context/QuizContext';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../routes/root';
@@ -17,19 +17,17 @@ interface Materia {
   ano: string;
 }
 
-// Tipo estendido para incluir replace
 type QuestionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Question'> & {
   replace: (screen: keyof RootStackParamList, params?: any) => void;
 };
 
-// Tipo para os parâmetros da rota
 type QuestionRouteProp = RouteProp<RootStackParamList, 'Question'>;
 
 export default function Question() {
     const { isDarkMode } = useTheme();
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const navigation = useNavigation<QuestionScreenNavigationProp>();
-    const route = useRoute<QuestionRouteProp>(); // Usando o tipo correto
+    const route = useRoute<QuestionRouteProp>();
     const { questoes, addResposta } = useQuiz();
     
     const currentIndex = route.params?.index || 0;
@@ -62,21 +60,26 @@ export default function Question() {
     ];
 
     const handleNext = () => {
-        if (selectedOption !== null && questao) {
-            const acertou = selectedOption === questao.opcaoCerta;
-            addResposta(questao.idQuestao, acertou);
-            
-            if (isLastQuestion) {
-                navigation.replace('Results');
-            } else {
-                setSelectedOption(null);
-                navigation.replace('Question', { 
-                    index: currentIndex + 1,
-                    materia: route.params?.materia
-                });
-            }
-        }
-    };
+      if (selectedOption !== null && questao) {
+          const acertou = selectedOption.toUpperCase() === questao.respostaCorreta.toUpperCase();
+          console.log(`Registrando resposta para questão ${questao.id}:`, {
+              selected: selectedOption,
+              correct: questao.respostaCorreta,
+              result: acertou
+          });
+          addResposta(questao.id, acertou);
+          
+          if (isLastQuestion) {
+              navigation.replace('Results');
+          } else {
+              setSelectedOption(null);
+              navigation.replace('Question', { 
+                  index: currentIndex + 1,
+                  materia: route.params?.materia
+              });
+          }
+      }
+  };
 
     const handlePrevious = () => {
         if (currentIndex > 0) {

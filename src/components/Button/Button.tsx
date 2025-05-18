@@ -8,16 +8,17 @@ interface ButtonProps {
   onPress: () => void;
   style: object;
   textStyle: object;
+  disabled: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({ title, onPress, style, textStyle }) => {
+const Button: React.FC<ButtonProps> = ({ title, onPress, style, textStyle, disabled }) => {
   const handlePress = () => {
     playClickSound();
     onPress();
   };
 
   return (
-    <TouchableOpacity style={style} onPress={handlePress}>
+    <TouchableOpacity style={style} onPress={handlePress} disabled={disabled}>
       <Text style={textStyle}>{title}</Text>
     </TouchableOpacity>
   );

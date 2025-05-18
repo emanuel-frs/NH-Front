@@ -16,10 +16,10 @@ export default function AboutUs() {
   const members = [
     { name: 'Emanuel', url: 'https://github.com/emanuel-frs' },
     { name: 'Izabelle', url: 'https://github.com/izaabelha' },
-    { name: 'Romario', url: 'https://github.com/romariobismarck' },
-    { name: 'Maria', url: 'https://github.com/maria-dev' },
-    { name: 'Carlos', url: 'https://github.com/carlos-dev' },
-    { name: 'Julia', url: 'https://github.com/julia-dev' },
+    { name: 'Romario', url: 'https://github.com/RomarioBismarck' },
+    { name: 'Ivo', url: 'https://github.com/Oricher' },
+    // { name: 'Carlos', url: 'https://github.com/carlos-dev' },
+    // { name: 'Julia', url: 'https://github.com/julia-dev' },
   ];
 
   const openLink = async (url: string) => {

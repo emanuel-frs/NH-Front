@@ -164,4 +164,21 @@ export const styles = StyleSheet.create({
     modalContentWrong: {
         borderColor: '#E40E3C',
     },
+    registroContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 10,
+    },
+    registroText: {
+        marginLeft: 10,
+        fontSize: 14,
+        fontFamily: 'Baloo2-Regular',
+    },
+    erroText: {
+        textAlign: 'center',
+        color: '#E40E3C',
+        marginVertical: 10,
+        fontFamily: 'Baloo2-SemiBold',
+    },
 });

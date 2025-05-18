@@ -1,20 +1,22 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 type Questao = {
-  idQuestao: number;
-  enunciado: string;
-  opcaoA: string;
-  opcaoB: string;
-  opcaoC: string;
-  opcaoD: string;
-  opcaoCerta: string;
-};
+    id: number; 
+    enunciado: string;
+    opcaoA: string;
+    opcaoB: string;
+    opcaoC: string;
+    opcaoD: string;
+    respostaCorreta: string;
+    materia?: { id: number, nome: string };
+    serie?: string;
+  };
 
 type QuizContextType = {
   questoes: Questao[];
   setQuestoes: (questoes: Questao[]) => void;
   respostas: Record<number, boolean>;
-  addResposta: (idQuestao: number, acertou: boolean) => void;
+  addResposta: (id: number, acertou: boolean) => void;
   resetQuiz: () => void;
   progresso: {
     atual: number;
@@ -28,7 +30,11 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [questoes, setQuestoes] = useState<Questao[]>([]);
   const [respostas, setRespostas] = useState<Record<number, boolean>>({});
 
-  const addResposta = useCallback((idQuestao: number, acertou: boolean) => {
+  const addResposta = useCallback((idQuestao: number | string | undefined, acertou: boolean) => {
+    if (!idQuestao) {
+      console.warn('Tentativa de adicionar resposta sem ID, usando ID temporário');
+      idQuestao = `temp-${Date.now()}`;
+    }
     setRespostas(prev => ({ ...prev, [idQuestao]: acertou }));
   }, []);
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Background from '../../components/Background/Background';
 import { useTheme } from '../../context/ThemeContext';
 import { useQuiz } from '../../context/QuizContext';
@@ -9,12 +9,15 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../routes/root';
 import { styles } from './styles';
 import HeaderDefault from '../../components/HeaderDefault/HeaderDefault';
+import { registrarAcerto } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 type ResultsNavigationProp = StackNavigationProp<RootStackParamList, 'Results'>;
 
 export default function Results() {
     const { isDarkMode } = useTheme();
     const { questoes, respostas, resetQuiz } = useQuiz();
+    const { usuario } = useAuth();
     const navigation = useNavigation<ResultsNavigationProp>();
     const [mensagem, setMensagem] = useState<string>("");
     const [tituloMensagem, setTituloMensagem] = useState<string>("");
@@ -24,10 +27,8 @@ export default function Results() {
         questao: any;
         acertou: boolean;
     } | null>(null);
-
-    const backgroundImage = isDarkMode 
-        ? require('../../assets/backgroundDark.png') 
-        : require('../../assets/backgroundWhite.png');
+    const [registroConcluido, setRegistroConcluido] = useState(false);
+    const [erroRegistro, setErroRegistro] = useState<string | null>(null);
     
     const backgroundColor = isDarkMode ? '#202E38' : '#FFFFFF';
     
@@ -52,7 +53,36 @@ export default function Results() {
             setTituloMensagem("NÃO DESANIME");
             setMensagem("Dessa vez, você não acertou nenhuma, mas isso faz parte do aprendizado. Cada erro é uma chance de melhorar. Continue estudando e tentando, porque você é capaz de evoluir e conquistar seus objetivos!");
         }
-    }, [acertos]);    
+
+        // Registrar os acertos no backend
+        const registrarTodosAcertos = async () => {
+            if (!usuario) {
+                setErroRegistro('Usuário não identificado');
+                setRegistroConcluido(true);
+                return;
+            }
+
+            try {
+                setRegistroConcluido(false);
+                setErroRegistro(null);
+                
+                const promises = questoes.map(questao => {
+                    const acertou = respostas[questao.id] || false;
+                    return registrarAcerto(usuario.id, questao.id, acertou);
+                });
+
+                await Promise.all(promises);
+                console.log('Todos os acertos foram registrados com sucesso!');
+            } catch (error) {
+                console.error('Erro ao registrar acertos:', error);
+                setErroRegistro('Ocorreu um erro ao salvar seus resultados. Seus dados locais estão salvos.');
+            } finally {
+                setRegistroConcluido(true);
+            }
+        };
+
+        registrarTodosAcertos();
+    }, [acertos, questoes, respostas, usuario]);    
 
     const handleRestart = () => {
         resetQuiz();
@@ -60,7 +90,7 @@ export default function Results() {
     };
 
     const handleQuestionPress = (questao: any) => {
-        const acertou = respostas[questao.idQuestao];
+        const acertou = respostas[questao.id];
         setSelectedQuestion({
             questao,
             acertou
@@ -69,7 +99,7 @@ export default function Results() {
     };
 
     const getQuestionIndex = () => {
-        return questoes.findIndex(q => q.idQuestao === selectedQuestion?.questao?.idQuestao) + 1;
+        return questoes.findIndex(q => q.id === selectedQuestion?.questao?.id) + 1;
     };
 
     return (
@@ -82,12 +112,30 @@ export default function Results() {
                 <Text style={[styles.text, isDarkMode ? styles.txtDark : styles.txtWhite]}>
                     {mensagem}
                 </Text>
+
+                {/* Indicador de carregamento */}
+                {!registroConcluido && (
+                    <View style={styles.registroContainer}>
+                        <ActivityIndicator size="small" color={isDarkMode ? '#fff' : '#325874'} />
+                        <Text style={[styles.registroText, isDarkMode ? styles.txtDark : styles.txtWhite]}>
+                            Salvando seus resultados...
+                        </Text>
+                    </View>
+                )}
+
+                {/* Mensagem de erro se ocorrer */}
+                {erroRegistro && (
+                    <Text style={[styles.erroText, isDarkMode ? styles.txtDark : styles.txtWhite]}>
+                        {erroRegistro}
+                    </Text>
+                )}
+
                 <View style={styles.grid}>
                     {questoes.map((questao, index) => {
-                        const acertou = respostas[questao.idQuestao];
+                        const acertou = respostas[questao.id];
                         return (
                             <TouchableOpacity
-                                key={questao.idQuestao}
+                                key={questao.id}
                                 style={[
                                     styles.cell,
                                     isDarkMode ? styles.cellDark : styles.cellWhite,
@@ -95,6 +143,7 @@ export default function Results() {
                                     gabaritou ? styles.gabaritou : {}
                                 ]}
                                 onPress={() => handleQuestionPress(questao)}
+                                disabled={!registroConcluido} // Desabilita interação enquanto salva
                             >
                                 <Text style={[
                                     styles.cellText, 
@@ -113,6 +162,7 @@ export default function Results() {
                         onPress={handleRestart}
                         style={[styles.button, gabaritou ? styles.btnGabaritou : styles.btnNormal]}
                         textStyle={styles.buttonText}
+                        disabled={!registroConcluido}
                     />
                 </View>
             </View>
@@ -159,6 +209,7 @@ export default function Results() {
                         </ScrollView>
                         
                         <Button
+                            disabled={false}
                             title="FECHAR"
                             onPress={() => setModalVisible(false)}
                             style={[
