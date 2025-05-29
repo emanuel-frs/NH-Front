@@ -62,11 +62,6 @@ export default function Question() {
     const handleNext = () => {
       if (selectedOption !== null && questao) {
           const acertou = selectedOption.toUpperCase() === questao.respostaCorreta.toUpperCase();
-          console.log(`Registrando resposta para questão ${questao.id}:`, {
-              selected: selectedOption,
-              correct: questao.respostaCorreta,
-              result: acertou
-          });
           addResposta(questao.id, acertou);
           
           if (isLastQuestion) {

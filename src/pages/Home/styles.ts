@@ -106,4 +106,19 @@ export const styles = StyleSheet.create({
         fontFamily: 'Baloo2-Bold',
         marginRight: 20
     },
+    modalBackground: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    activityIndicatorWrapper: {
+        backgroundColor: 'transparent',
+        height: 100,
+        width: 100,
+        borderRadius: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });

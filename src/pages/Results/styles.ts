@@ -181,4 +181,12 @@ export const styles = StyleSheet.create({
         marginVertical: 10,
         fontFamily: 'Baloo2-SemiBold',
     },
+    btnDisabled: {
+        borderColor: '#CCCCCC',
+        backgroundColor: '#DDDDDD',
+        opacity: 0.7,
+    },
+    buttonTextDisabled: {
+        color: '#999999',
+    },
 });

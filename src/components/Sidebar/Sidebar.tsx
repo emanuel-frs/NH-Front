@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Pressable, Animated, View } from "react-native";
+import { Pressable, Animated, View, Text } from "react-native";
 import { styles } from "./styles";
 import { useSidebar } from "../../context/SidebarContext";
 import ButtonHeader from "../ButtonSidebar/ButtonSidebar";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
-import { Text } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import LogoutConfirmationModal from "../ModalLogout";
+import UserInfoModal from "../ModalUsuario/ModalUsuario";
 
 export function Sidebar() {
     const { sidebar, setSidebar } = useSidebar();
@@ -16,6 +16,7 @@ export function Sidebar() {
     const [isVisible, setIsVisible] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const { usuario, logout } = useAuth();
+    const [showUserInfoModal, setShowUserInfoModal] = useState(false);
 
     if (!usuario) return null;
 
@@ -36,13 +37,13 @@ export function Sidebar() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
 
     const handleNavigateAboutUs = () => {
-        setSidebar(false)
-        navigation.navigate('AboutUs');
+        setSidebar(false);
+        navigation.navigate("AboutUs");
     };
 
     const handleNavigateInicio = () => {
-        setSidebar(false)
-        navigation.navigate('Home');
+        setSidebar(false);
+        navigation.navigate("Home");
     };
 
     useEffect(() => {
@@ -97,19 +98,45 @@ export function Sidebar() {
                     { left: slideAnim }
                 ]}>
                 <View>
-                    <View style={[
-                        isDarkMode ? styles.perfilDark : styles.perfilWhite,
-                        styles.perfil
-                    ]}>
-                        {usuario && (
-                        <Text style={[
-                            isDarkMode ? styles.txtSidebarNomeDark : styles.txtSidebarDark,
-                            styles.txtSidebarNome
+                    <Pressable
+                        onLongPress={() => setShowUserInfoModal(true)}
+                        delayLongPress={300}
+                    >
+                        <View style={[
+                            isDarkMode ? styles.perfilDark : styles.perfilWhite,
+                            styles.perfil
                         ]}>
-                            {usuario.nome}
-                        </Text>
-                        )}
-                    </View>
+                            {usuario && (
+                                <View>
+                                    <Text
+                                        style={[
+                                            isDarkMode ? styles.txtSidebarNomeDark : styles.txtSidebarDark,
+                                            styles.txtSidebarNome
+                                        ]}
+                                        numberOfLines={1}
+                                        ellipsizeMode="tail"
+                                    >
+                                        {usuario.nome}
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            isDarkMode ? styles.txtSidebarEmailDark : styles.txtSidebarEmailWhite,
+                                            styles.txtSidebarEmail
+                                        ]}
+                                        numberOfLines={1}
+                                        ellipsizeMode="tail"
+                                    >
+                                        {usuario.email}
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                    </Pressable>
+                    <UserInfoModal
+                        visible={showUserInfoModal}
+                        onClose={() => setShowUserInfoModal(false)}
+                        user={usuario}
+                    />
                     <ButtonHeader
                         title="INÍCIO"
                         onPress={handleNavigateInicio}

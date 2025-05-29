@@ -39,7 +39,21 @@ export const getMaterias = async () => {
   }
 };
 
-export const getPerguntasByMateria = async (idMateria: number, serie: string, idUsuario: number) => {
+export const getPerguntasByMateriaAcertadas = async (idMateria: number, serie: string, idUsuario: number) => {
+  try {
+    const response = await api.get(`/pergunta/acertadas/${idMateria}/${serie}/${idUsuario}`);
+    const questoesTransformadas = response.data.map((questao: any) => ({
+      ...questao,
+      idQuestao: questao.id
+    }));
+    return questoesTransformadas;
+  } catch (error) {
+    console.error('Erro ao buscar questões:', error);
+    throw error;
+  }
+};
+
+export const getPerguntasByMateriaNaoAcertadas = async (idMateria: number, serie: string, idUsuario: number) => {
   try {
     const response = await api.get(`/pergunta/nao-respondidas/${idMateria}/${serie}/${idUsuario}`);
     const questoesTransformadas = response.data.map((questao: any) => ({
@@ -88,5 +102,45 @@ export const porcentagemAcertos = async (materiaId: number, serie: string, usuar
   } catch (error) {
     console.error(`Erro ao buscar porcentagem da matéria ${materiaId}:`, error);
     return 0;
+  }
+};
+
+export const alterarSerie = async (usuarioId: number, serie: string) => {
+  try {
+    const response = await api.put(`/usuario/${usuarioId}`, {
+      serie: serie
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Erro ao editar usuario`, error);
+    throw error;
+  }
+};
+
+export const resetarQuestionario = async (usuarioId: number, materiaId: number, serie: string) => {
+  try {
+    const response = await api.put(`/resposta/usuario/${usuarioId}/materia/${materiaId}/serie/${serie}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Erro ao resetar questionário`, error);
+    throw error;
+  }
+};
+
+export const enviarRespostasSimplificado = async (
+  usuarioId: number,
+  respostas: Array<{ idPergunta: number; correta: boolean }>
+) => {
+  try {
+    const response = await api.post(`/resposta/usuario/${usuarioId}/lote`, 
+      respostas.map(r => ({
+        pergunta: { id: r.idPergunta },
+        correta: r.correta
+      }))
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao enviar respostas:', error);
+    throw error;
   }
 };

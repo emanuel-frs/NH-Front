@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { getPerguntasByMateria } from '../../services/api';
+import { getPerguntasByMateriaNaoAcertadas } from '../../services/api';
 import { useQuiz } from '../../context/QuizContext';
 import { styles } from './styles';
 import { useTheme } from '../../context/ThemeContext';
@@ -16,8 +16,8 @@ type Params = {
     };
     usuario: {
       idUsuario: number;
-      serie: string
-    }
+      serie: string;
+    };
   };
 };
 
@@ -35,21 +35,21 @@ export default function LoadingQuestions() {
   const { isDarkMode } = useTheme();
 
   if (!usuario) return null;
-  
+
   const backgroundColor = isDarkMode ? '#202E38' : '#FFFFFF';
 
   useEffect(() => {
     const fetchQuestoes = async () => {
       try {
-        const data = await getPerguntasByMateria(materia.id, usuario.serie, usuario.id);
+        const data = await getPerguntasByMateriaNaoAcertadas(materia.id, usuario.serie, usuario.id);
         const questoesAleatorias = embaralharArray(data).slice(0, 10);
         setQuestoes(questoesAleatorias);
         navigation.replace('Question', { 
           index: 0, 
           materia 
-        });        
+        });
       } catch (err) {
-        console.error('Erro ao carregar questões:', err);
+        console.error('Erro ao carregar questões não acertadas:', err);
       }
     };
 
@@ -63,7 +63,7 @@ export default function LoadingQuestions() {
   return (
     <Background backgroundImage={() => {}} backgroundColor={backgroundColor}>
       <View style={styles.container}>
-        <ActivityIndicator size="large" color={isDarkMode ? '#fff' : '#325874'}/>
+        <ActivityIndicator size="large" color={isDarkMode ? '#fff' : '#325874'} />
         <Text style={[styles.text, isDarkMode ? styles.txtDark : styles.txtWhite]}>Carregando questões...</Text>
       </View>
     </Background>

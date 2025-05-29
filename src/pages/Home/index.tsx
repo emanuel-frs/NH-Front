@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, ActivityIndicator, TouchableOpacity } from "react-native";
+import { Text, View, ActivityIndicator, TouchableOpacity, Alert, Modal } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 import { useNavigation, NavigationProp, useRoute, RouteProp } from "@react-navigation/native";
 import { styles } from "./styles";
@@ -7,10 +7,11 @@ import HeaderHome from "../../components/HeaderHome/HeaderHome";
 import Background from "../../components/Background/Background";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
 import { ScrollView } from "react-native-gesture-handler";
-import { getMaterias, porcentagemAcertos } from "../../services/api";
+import { getMaterias, porcentagemAcertos, resetarQuestionario, alterarSerie } from "../../services/api";
 import Button from "../../components/Button/Button";
 import { useAuth } from "../../context/AuthContext";
 import { serieMap } from "../../utills/serieFormatada";
+import CompleteMateriaModal from "../../components/ModalChange/ModalChange";
 
 interface Materia {
   id: number;
@@ -50,10 +51,13 @@ export default function Home() {
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [porcentagens, setPorcentagens] = useState<Record<number, number>>({});
   const route = useRoute<RouteProp<HomeRouteParams, "Home">>();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // apenas para carregar matérias
   const [error, setError] = useState("");
   const [retrying, setRetrying] = useState(false);
   const { usuario, logout } = useAuth();
+  const [modalCompleteVisible, setModalCompleteVisible] = useState(false);
+  const [selectedMateria, setSelectedMateria] = useState<Materia | null>(null);
+  const [isApiLoading, setIsApiLoading] = useState(false); // usado para ações fora do carregamento inicial
 
   const backgroundColor = isDarkMode ? "#202E38" : "#FFFFFF";
 
@@ -63,9 +67,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!usuario) {
-      const timeout = setTimeout(() => {
-        logout();
-      }, 3000);
+      const timeout = setTimeout(() => logout(), 3000);
       return () => clearTimeout(timeout);
     }
   }, [usuario]);
@@ -73,12 +75,12 @@ export default function Home() {
   const fetchMaterias = async (isRetry = false) => {
     if (isRetry) setRetrying(true);
     else setLoading(true);
-
+    
     setError("");
     try {
       const data = await getMaterias();
       setMaterias(data);
-      await fetchPorcentagens(data);
+      await fetchPorcentagens(data); // não ativa isApiLoading nesse caso
     } catch (err) {
       setError("Houve um erro ao buscar as matérias.\n Tente novamente mais tarde.");
       console.error(err);
@@ -93,19 +95,15 @@ export default function Home() {
 
     try {
       const porcentagensMap: Record<number, number> = {};
-
       for (const materia of materias) {
         try {
           const response = await porcentagemAcertos(materia.id, usuario.serie, usuario.id);
-          const porcentagem = response || 0;
-
-          porcentagensMap[materia.id] = porcentagem;
+          porcentagensMap[materia.id] = response || 0;
         } catch (error) {
           console.error(`Erro ao buscar porcentagem da matéria ${materia.nome}`, error);
           porcentagensMap[materia.id] = 0;
         }
       }
-
       setPorcentagens(porcentagensMap);
     } catch (err) {
       console.error("Erro ao carregar porcentagens:", err);
@@ -113,7 +111,56 @@ export default function Home() {
   };
 
   const handleMateriaPress = (materia: Materia, usuario: Usuario) => {
-    navigation.navigate("LoadingQuestions", { materia, usuario });
+    const porcentagem = porcentagens[materia.id] ?? 0;
+    if (porcentagem === 100) {
+      setSelectedMateria(materia);
+      setModalCompleteVisible(true);
+    } else {
+      navigation.navigate("LoadingQuestions", { materia, usuario });
+    }
+  };
+
+  const handleRefazer = async () => {
+    if (!selectedMateria || !usuario) return;
+    setIsApiLoading(true);
+    try {
+      await resetarQuestionario(usuario.id, selectedMateria.id, usuario.serie);
+      setModalCompleteVisible(false);
+      navigation.navigate("LoadingQuestions", { materia: selectedMateria, usuario });
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível resetar o progresso desta matéria.");
+      console.error(error);
+    } finally {
+      setIsApiLoading(false);
+    }
+  };
+
+  const handleAlterarSerie = async (newSerie: string) => {
+    if (!usuario || !selectedMateria) return;
+    setIsApiLoading(true);
+    try {
+      await alterarSerie(usuario.id, newSerie);
+      setModalCompleteVisible(false);
+      const data = await getMaterias();
+      setMaterias(data);
+
+      const porcentagensMap: Record<number, number> = {};
+      for (const materia of data) {
+        try {
+          const response = await porcentagemAcertos(materia.id, newSerie, usuario.id);
+          porcentagensMap[materia.id] = response || 0;
+        } catch (error) {
+          console.error(`Erro ao buscar porcentagem da matéria ${materia.nome}`, error);
+          porcentagensMap[materia.id] = 0;
+        }
+      }
+      setPorcentagens(porcentagensMap);
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível alterar a série.");
+      console.error(error);
+    } finally {
+      setIsApiLoading(false);
+    }
   };
 
   if (!usuario) {
@@ -138,19 +185,12 @@ export default function Home() {
           </View>
         ) : error ? (
           <View style={styles.retryContainer}>
-            <Text
-              style={[
-                styles.txtError,
-                {
-                  textAlign: "center",
-                  marginBottom: 20,
-                  color: isDarkMode ? "#FFF" : "#325874",
-                },
-              ]}
-            >
+            <Text style={[
+              styles.txtError,
+              { textAlign: "center", marginBottom: 20, color: isDarkMode ? "#FFF" : "#325874" }
+            ]}>
               {error}
             </Text>
-
             {retrying ? (
               <ActivityIndicator size="large" color="#FFF" />
             ) : (
@@ -170,7 +210,6 @@ export default function Home() {
                 const porcentagem = porcentagens[materia.id] ?? 0;
                 const bgColor = getColorByPercentage(porcentagem);
                 const textColor = getTextColor(porcentagem);
-
                 return (
                   <TouchableOpacity
                     key={`${materia.id}-${materia.nome}`}
@@ -197,6 +236,24 @@ export default function Home() {
           </ScrollView>
         )}
       </Background>
+
+      {/* Loading global para ações fora do fetch inicial */}
+      <Modal transparent={true} animationType="fade" visible={isApiLoading}>
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator size="large" color={isDarkMode ? "#FFF" : "#325874"} />
+          </View>
+        </View>
+      </Modal>
+
+      <CompleteMateriaModal
+        visible={modalCompleteVisible}
+        materia={selectedMateria?.nome || ""}
+        currentSerie={usuario?.serie || ""}
+        onRefazer={handleRefazer}
+        onAlterarSerie={handleAlterarSerie}
+        onCancel={() => setModalCompleteVisible(false)}
+      />
     </>
   );
 }

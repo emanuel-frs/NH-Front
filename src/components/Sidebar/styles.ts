@@ -102,4 +102,16 @@ export const styles = StyleSheet.create({
     txtSidebarNomeDark: {
         color: '#FFF'
     },
+    txtSidebarEmail: {
+        fontFamily: 'Baloo2-Regular',
+        fontSize: 14,
+        width: 190,
+        marginTop: -5,
+    },
+    txtSidebarEmailWhite: {
+        color: '#B0C4D0',
+    },
+    txtSidebarEmailDark: {
+        color: '#D0D0D0',
+    },
 })

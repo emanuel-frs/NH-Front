@@ -4,7 +4,7 @@
     "slug": "quiztion",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/logoApp.png",
+    "icon": "./src/assets/icons/logoApp.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -15,7 +15,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/logoApp.png",
+        "foregroundImage": "./src/assets/icons/logoApp.png",
         "backgroundColor": "#000"
       },
       "package": "com.emanuelfrs.quiztion"

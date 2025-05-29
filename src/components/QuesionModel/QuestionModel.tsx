@@ -15,7 +15,7 @@ const QuestionModel: React.FC<QuestionModelProps> = ({ title, onPress, isSelecte
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePress = () => {
-    playClickSound();
+    //playClickSound();
     onPress();
   };
 

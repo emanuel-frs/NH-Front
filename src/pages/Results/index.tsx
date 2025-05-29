@@ -54,7 +54,6 @@ export default function Results() {
             setMensagem("Dessa vez, você não acertou nenhuma, mas isso faz parte do aprendizado. Cada erro é uma chance de melhorar. Continue estudando e tentando, porque você é capaz de evoluir e conquistar seus objetivos!");
         }
 
-        // Registrar os acertos no backend
         const registrarTodosAcertos = async () => {
             if (!usuario) {
                 setErroRegistro('Usuário não identificado');
@@ -65,14 +64,13 @@ export default function Results() {
             try {
                 setRegistroConcluido(false);
                 setErroRegistro(null);
-                
-                const promises = questoes.map(questao => {
-                    const acertou = respostas[questao.id] || false;
-                    return registrarAcerto(usuario.id, questao.id, acertou);
-                });
+
+                const questoesAcertadas = questoes.filter(questao => respostas[questao.id]);
+                const promises = questoesAcertadas.map(questao =>
+                    registrarAcerto(usuario.id, questao.id, true)
+                );
 
                 await Promise.all(promises);
-                console.log('Todos os acertos foram registrados com sucesso!');
             } catch (error) {
                 console.error('Erro ao registrar acertos:', error);
                 setErroRegistro('Ocorreu um erro ao salvar seus resultados. Seus dados locais estão salvos.');
@@ -112,8 +110,6 @@ export default function Results() {
                 <Text style={[styles.text, isDarkMode ? styles.txtDark : styles.txtWhite]}>
                     {mensagem}
                 </Text>
-
-                {/* Indicador de carregamento */}
                 {!registroConcluido && (
                     <View style={styles.registroContainer}>
                         <ActivityIndicator size="small" color={isDarkMode ? '#fff' : '#325874'} />
@@ -122,14 +118,11 @@ export default function Results() {
                         </Text>
                     </View>
                 )}
-
-                {/* Mensagem de erro se ocorrer */}
                 {erroRegistro && (
                     <Text style={[styles.erroText, isDarkMode ? styles.txtDark : styles.txtWhite]}>
                         {erroRegistro}
                     </Text>
                 )}
-
                 <View style={styles.grid}>
                     {questoes.map((questao, index) => {
                         const acertou = respostas[questao.id];
@@ -143,7 +136,7 @@ export default function Results() {
                                     gabaritou ? styles.gabaritou : {}
                                 ]}
                                 onPress={() => handleQuestionPress(questao)}
-                                disabled={!registroConcluido} // Desabilita interação enquanto salva
+                                disabled={!registroConcluido}
                             >
                                 <Text style={[
                                     styles.cellText, 
@@ -160,7 +153,11 @@ export default function Results() {
                     <Button
                         title="FINALIZAR"
                         onPress={handleRestart}
-                        style={[styles.button, gabaritou ? styles.btnGabaritou : styles.btnNormal]}
+                        style={[
+                            styles.button, 
+                            gabaritou ? styles.btnGabaritou : styles.btnNormal,
+                            !registroConcluido && styles.btnDisabled
+                        ]}
                         textStyle={styles.buttonText}
                         disabled={!registroConcluido}
                     />
